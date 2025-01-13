@@ -9,7 +9,14 @@
 /coverage
 
 # production
-/build
+node_modules
+*.js
+.idea/
+build/
+
+# Nuxt.js build / generate output
+.nuxt
+dist
 
 # misc
 .DS_Store

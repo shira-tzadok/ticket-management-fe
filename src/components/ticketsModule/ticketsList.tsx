@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { getTickets } from "../../server/ticketsApi";
 import TicketData from "./ticketData";
@@ -17,21 +17,17 @@ const TicketsList: React.FC<TicketsListProps> = ({ userType, searchQuery }) => {
         const { data } = await getTickets(page, userType);
         setTickets((prevTickets) => [...prevTickets, ...data.tickets]);
         setHasMore(data.hasMore);
-        if (page === 1) {
-            setPage(2)
-        }
     }, [page, userType]);
 
     useEffect(() => {
-        console.log('************************* ',page)
          fetchTickets(page)
     }, [pageRef]);
 
-    const filteredTickets = tickets.filter(ticket =>
-        ticket.title.toLowerCase().indexOf(searchQuery.toLowerCase()) >= 0
+    const filteredTickets = useMemo(() =>
+        tickets.filter(ticket =>
+            ticket.title.toLowerCase().includes(searchQuery.toLowerCase())
+        ), [tickets, searchQuery]
     );
-
-    console.log('TicketsList rendered', searchQuery, filteredTickets)
 
     return (
         <InfiniteScroll
