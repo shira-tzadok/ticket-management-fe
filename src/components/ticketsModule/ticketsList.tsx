@@ -11,7 +11,6 @@ const TicketsList: React.FC<TicketsListProps> = ({ userType, searchQuery }) => {
     const [tickets, setTickets] = useState<any[]>([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
-    const pageRef = useRef(page);
 
     const fetchTickets = useCallback(async (page: number) => {
         const { data } = await getTickets(page, userType);
@@ -21,7 +20,7 @@ const TicketsList: React.FC<TicketsListProps> = ({ userType, searchQuery }) => {
 
     useEffect(() => {
          fetchTickets(page)
-    }, [pageRef]);
+    }, [page]);
 
     const filteredTickets = useMemo(() =>
         tickets.filter(ticket =>
