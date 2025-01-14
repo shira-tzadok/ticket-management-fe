@@ -11,11 +11,14 @@ const TicketsList: React.FC<TicketsListProps> = ({ userType, searchQuery }) => {
     const [tickets, setTickets] = useState<any[]>([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const fetchTickets = useCallback(async (page: number) => {
+        setIsLoading(true);
         const { data } = await getTickets(page, userType);
         setTickets((prevTickets) => [...prevTickets, ...data.tickets]);
         setHasMore(data.hasMore);
+        setIsLoading(false);
     }, [page, userType]);
 
     useEffect(() => {
@@ -24,7 +27,7 @@ const TicketsList: React.FC<TicketsListProps> = ({ userType, searchQuery }) => {
 
     const filteredTickets = useMemo(() =>
         tickets.filter(ticket =>
-            ticket.title.toLowerCase().includes(searchQuery.toLowerCase())
+            ticket.title.toLowerCase().includes(searchQuery.toLowerCase()) || ticket.description.toLowerCase().includes(searchQuery.toLowerCase())
         ), [tickets, searchQuery]
     );
 
@@ -33,7 +36,7 @@ const TicketsList: React.FC<TicketsListProps> = ({ userType, searchQuery }) => {
             dataLength={filteredTickets.length}
             next={() => setPage(page + 1)}
             hasMore={hasMore}
-            loader={<CircularProgress />}
+            loader={isLoading? <CircularProgress />: null}
         >
             {userType === "local" ? (
                 <Grid container spacing={2}>
